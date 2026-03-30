@@ -2,12 +2,12 @@ import prisma from "@/lib/prisma";
 import { getSession } from "@/lib/session";
 import { NextResponse } from "next/server";
 
-export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function PATCH(request: Request, context: { params: Promise<{ id: string }> }) {
   const isAuthenticated = await getSession();
   if (!isAuthenticated) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   try {
-    const { id } = await params;
+    const { id } = await context.params;
     const { name, color } = await request.json();
 
     const updatedRoom = await prisma.room.update({
@@ -25,12 +25,12 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   }
 }
 
-export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function DELETE(request: Request, context: { params: Promise<{ id: string }> }) {
   const isAuthenticated = await getSession();
   if (!isAuthenticated) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   try {
-    const { id } = await params;
+    const { id } = await context.params;
     
     // Check for existing bookings first
     const bookings = await prisma.booking.findMany({

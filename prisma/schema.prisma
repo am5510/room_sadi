@@ -1,0 +1,41 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Room {
+  id           String    @id @default(cuid())
+  name         String
+  type         String?   // e.g., "Boardroom", "Studio", "Focus Pod"
+  capacity     Int?      // Make optional
+  description  String?   // URL to image
+  image        String?   // Comma separated or JSON string
+  amenities    String?   // Calendar display color
+  color        String?   @default("#99FF66") // Calendar display color
+  bookings     Booking[]
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model Booking {
+  id           String    @id @default(cuid())
+  roomId       String
+  room         Room      @relation(fields: [roomId], references: [id])
+  title        String
+  date         DateTime  // The date of the booking
+  startTime    String    // e.g., "09:00"
+  endTime      String    // e.g., "11:00"
+  userName     String
+  userEmail    String
+  userAvatar   String?
+  status       String    @default("CONFIRMED") // "PENDING", "CONFIRMED", "CANCELLED"
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
